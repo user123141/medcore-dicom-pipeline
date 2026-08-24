@@ -1,9 +1,5 @@
 # MedCore AI: Volumetric DICOM Processing Pipeline
 
-[![License: MIT](https://shields.io)](https://opensource.org)
-[![Python 3.10+](https://shields.io)](https://python.org)
-[![Platform: Ubuntu 22.04 LTS](https://shields.io)](https://ubuntu.com)
-
 An open-source, high-performance computing (HPC) toolkit designed for clinical researchers and AI engineers to ingest, anonymize, and transform volumetric medical imaging datasets (MRI, CT, PET scans) into tensor formats optimized for neural network inference.
 
 ## 🌟 Core Features
