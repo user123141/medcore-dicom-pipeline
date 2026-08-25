@@ -1,61 +1,77 @@
-MedCore AI Labs — Distributed Medical AI Infrastructure
+<div align="center">
+MedCore AI Labs
+Distributed Medical AI Infrastructure
 
-Production-grade infrastructure for multi-vendor DICOM ingestion, zero-trust PHI sanitization, spatial normalization, FP32/FP16 tensor conversion, and distributed GPU cluster execution.
+High-performance DICOM ingestion, PHI sanitization, spatial normalization, volumetric tensor processing, and distributed GPU execution for clinical research and medical AI workloads.
 
-MedCore AI Labs provides high-performance infrastructure for bridging legacy clinical radiology systems with modern AI inference environments.
+<br>
 
-The medcore-dicom-pipeline engine is designed to ingest volumetric MRI, CT, and PET datasets, sanitize sensitive DICOM metadata, normalize spatial dimensions across heterogeneous scanners, and transform volumetric pixel data into optimized NumPy/PyTorch tensor artifacts for downstream neural network inference.
 
-🌐 System Architecture
-┌───────────────────────────────┐
-│       Legacy DICOM Source     │
-│      MRI • CT • PET • etc.    │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│     Zero-Trust HIPAA Gateway  │
-│  PHI Scrubbing • Audit Trail  │
-│       AES-256 / SHA-256       │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│       Spatial Normalization   │
-│  Isotropic Voxel Resampling   │
-│         1.0 × 1.0 × 1.0 mm   │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│     PyTorch GPU Accelerator   │
-│ CUDA 12.x • A100 • A10 • T4  │
-│      Distributed Compute      │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│       Persistent Storage       │
-│      Optimized .pt Artifacts  │
-└───────────────────────────────┘
 
-✨ Core Capabilities
-Capability	Description
-DICOM Ingestion	Recursive multi-vendor ingestion of standard .dcm files and extensionless clinical series
-PHI Sanitization	Automated removal of sensitive identifiers before secondary processing and storage
-Cryptographic Auditing	SHA-256 hashing and AES-256 audit-trail infrastructure
-Spatial Normalization	Standardized isotropic voxel resampling to a 1.0 × 1.0 × 1.0 mm grid
-Volumetric Conversion	Transformation of multi-slice 2D DICOM datasets into contiguous volumetric tensors
-Precision Support	FP32 and FP16 tensor conversion for inference and accelerator workloads
-GPU Acceleration	NVIDIA CUDA execution targeting A100, A10, and T4 architectures
-CPU Fallback	Multi-threaded CPU execution when CUDA acceleration is unavailable
-Distributed Execution	Pipeline architecture designed for decentralized cloud and HPC compute nodes
-Persistent Artifacts	Export of optimized PyTorch .pt tensor artifacts
-🔐 Security & PHI Sanitization
 
-The pipeline incorporates a zero-trust processing model designed to minimize exposure of protected health information throughout downstream computational workflows.
 
-Sensitive DICOM attributes targeted by the sanitization layer include:
+
+
+
+
+
+<br>
+
+MRI · CT · PET · PyTorch · CUDA · HPC · Distributed GPU
+
+</div>
+Overview
+
+MedCore AI Labs develops infrastructure for transforming heterogeneous clinical imaging data into standardized, machine-learning-ready volumetric tensors.
+
+The medcore-dicom-pipeline is designed to bridge legacy radiology systems and modern AI inference infrastructure by providing a structured processing pipeline for:
+
+Multi-vendor DICOM ingestion
+Automated PHI metadata sanitization
+Volumetric reconstruction
+Spatial normalization
+FP32 / FP16 tensor conversion
+CUDA-accelerated processing
+Multi-node GPU execution
+Persistent PyTorch tensor artifacts
+
+The system is intended for clinical research, medical AI engineering, dataset preprocessing, and HPC workloads.
+
+Architecture
+
+The pipeline follows a staged processing architecture:
+
+Legacy DICOM SourcesMRI · CT · PET
+DICOM Ingestion
+PHI SanitizationMetadata Scrubbing
+Volumetric Reconstruction
+Spatial Normalization1.0 × 1.0 × 1.0 mm
+Tensor ConversionFP32 / FP16
+Execution Backend
+NVIDIA CUDAA100 · A10 · T4
+Multi-threaded CPU
+Persistent Tensor Artifacts.pt
+AI Training / InferenceCNN · ViT · HPC
+Processing lifecycle
+Discover clinical DICOM files and series.
+Parse metadata and pixel data using pydicom.
+Sanitize configured sensitive metadata fields.
+Reconstruct volumetric image data from individual slices.
+Normalize spatial resolution across heterogeneous scanners.
+Convert the resulting volume into PyTorch tensors.
+Accelerate execution through CUDA when available.
+Persist optimized tensor artifacts for downstream workloads.
+Core Capabilities
+DICOM Ingestion
+Recursive directory scanning
+Standard .dcm files
+Extensionless clinical series
+Multi-vendor datasets
+Volumetric slice reconstruction
+Metadata-aware processing
+PHI Sanitization
+
+The sanitization layer targets sensitive DICOM attributes including:
 
 PatientName
 PatientID
@@ -64,80 +80,210 @@ InstitutionName
 PhysiciansOfRecord
 
 
-The processing sequence is structured as follows:
+The processing model is designed to ensure metadata sanitization occurs before downstream tensor persistence.
 
-┌───────────────────────┐
-│      Raw DICOM        │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│  Metadata Inspection  │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│   PHI Identification  │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│ Metadata Sanitization │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│ Cryptographic Audit   │
-│     SHA-256 / AES-256 │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│   Sanitized Dataset   │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│   Tensor Conversion   │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│ Persistent Tensor     │
-│      Artifact         │
-└───────────────────────┘
+Spatial Normalization
+
+Clinical datasets may originate from scanners with different voxel spacing and acquisition characteristics.
+
+The pipeline supports standardized isotropic spatial calibration:
+
+Target spacing:
+1.0 × 1.0 × 1.0 mm
 
 
-Compliance note: Technical sanitization controls do not, by themselves, constitute legal HIPAA compliance. Production deployments should be validated against applicable institutional policies, security controls, Business Associate Agreements, retention requirements, and regulatory obligations.
+This provides a consistent spatial representation for downstream volumetric neural networks.
 
-🧠 Volumetric Processing Pipeline
+Tensor Conversion
 
-The core processing layer uses pydicom to parse clinical metadata and pixel data, followed by spatial calibration and tensor transformation.
+The pipeline converts reconstructed volumes into PyTorch-compatible tensors supporting:
 
-Processing stages
-Recursive DICOM discovery
-Multi-vendor metadata parsing
-PHI detection and sanitization
-Slice ordering and volumetric reconstruction
-Pixel-spacing normalization
-Isotropic voxel resampling
-Floating-point tensor conversion
-FP32/FP16 optimization
-GPU or CPU execution
-Persistent .pt artifact export
+FP32
+FP16
+Configurable target dimensions
+Volumetric N × C × D × H × W layouts
+GPU execution
+CPU fallback
+Tensor Representation
 
-The resulting representation is intended to provide consistent spatial characteristics across datasets originating from different clinical scanners and acquisition environments.
+The standard volumetric representation is:
 
-🏗️ Codebase Structure
+(N, C, D, H, W)
 
-The primary processing engine is encapsulated within a modular object-oriented architecture:
+N = Batch
+C = Channels
+D = Depth
+H = Height
+W = Width
+
+
+Example:
+
+target_shape = (1, 1, 64, 256, 256)
+
+
+Resulting tensor:
+
+Batch:       1
+Channels:    1
+Depth:      64
+Height:    256
+Width:     256
+
+
+This representation is suitable for 3D convolutional architectures and volumetric vision-transformer pipelines.
+
+Security & Data Governance
+
+MedCore AI Labs uses a zero-trust processing model in which sensitive metadata is handled explicitly before downstream artifact generation.
+
+The security layer is designed around:
+
+PHI minimization
+Metadata sanitization
+Controlled data processing
+Cryptographic audit logging
+Encryption-aware infrastructure
+Access-controlled storage
+Dataset provenance
+Retention policies
+Audit Trail
+
+The architecture supports cryptographic audit mechanisms based on:
+
+SHA-256
+AES-256
+
+
+These mechanisms are intended to provide verifiable processing records and infrastructure-level auditability.
+
+Important: Technical PHI sanitization does not, by itself, establish legal or regulatory compliance. HIPAA compliance depends on the complete operational, organizational, administrative, physical, and technical controls of the deployment environment.
+
+Compute Infrastructure
+
+The compute layer supports heterogeneous execution environments.
+
+Layer	Supported Configuration
+GPU Runtime	NVIDIA CUDA 12.x
+GPU Architectures	A100 / A10 / T4
+CPU Runtime	Multi-threaded fallback
+Tensor Framework	PyTorch
+Numerical Layer	NumPy
+DICOM Engine	pydicom
+Operating System	Ubuntu 22.04 LTS
+Python	3.9+
+PyTorch	2.0+
+
+For current PyTorch installation commands, use the official PyTorch installer because the recommended package varies by operating system and CUDA configuration.
+
+Distributed Execution
+
+The architecture is designed for decentralized cloud and HPC environments.
+
+DICOM Data
+Ingestion Node
+Processing Queue
+GPU Node 01NVIDIA A100
+GPU Node 02NVIDIA A10
+GPU Node NNVIDIA T4
+Persistent Storage
+Tensor Artifacts
+AI Training / Inference
+
+The distributed execution model is intended to reduce processing latency between:
+
+ingestion → transformation → acceleration → persistence
+
+and to support horizontally scalable compute environments.
+
+Repository Structure
+medcore-dicom-pipeline/
+├── main.py
+├── README.md
+├── requirements.txt
+├── sample_data/
+│   └── ct_mri_scans/
+├── output/
+│   └── persistent_tensors/
+└── tests/
+
+Installation
+Requirements
+Python 3.9+
+PyTorch 2.0+
+NumPy
+pydicom
+CUDA 12.x for NVIDIA GPU acceleration
+Ubuntu 22.04 LTS recommended for GPU cluster deployments
+Install dependencies
+pip install pydicom numpy torch torchvision
+
+
+For CUDA-enabled installations, select the PyTorch build appropriate for the target NVIDIA/CUDA environment using the official PyTorch installation selector.
+
+Quick Start
+Clone
+git clone https://github.com/<your-org>/medcore-dicom-pipeline.git
+cd medcore-dicom-pipeline
+
+Install
+pip install pydicom numpy torch torchvision
+
+Prepare data
+sample_data/
+└── ct_mri_scans/
+    ├── series_001/
+    ├── series_002/
+    └── ...
+
+Execute
+python main.py
+
+Programmatic Usage
+from main import DICOMProcessor
+
+processor = DICOMProcessor(
+    input_dir="./sample_data/ct_mri_scans",
+    output_dir="./output/persistent_tensors",
+    target_spacing=(1.0, 1.0, 1.0)
+)
+
+# Discover DICOM files
+discovered_files = processor.scan_input_directory()
+
+# Sanitize sensitive metadata
+processor.sanitize_metadata(
+    remove_patient_id=True
+)
+
+# Convert volumetric data
+tensor_artifact = processor.convert_to_tensor(
+    dtype="float32",
+    target_shape=(1, 1, 64, 256, 256)
+)
+
+# Persist tensor artifact
+saved_path = processor.export_tensor_to_cluster(
+    tensor_artifact,
+    filename="volumetric_mri_tensor_prod.pt"
+)
+
+print(f"Discovered files: {len(discovered_files)}")
+print(f"Tensor shape: {tuple(tensor_artifact.shape)}")
+print(f"Saved artifact: {saved_path}")
+
+API Surface
+
+The primary processing engine is exposed through DICOMProcessor:
 
 class DICOMProcessor:
     def __init__(
         self,
         input_dir: str,
         output_dir: str,
-        target_spacing: Tuple[float, float, float] = (1.0, 1.0, 1.0)
+        target_spacing: Tuple[float, float, float] = (
+            1.0, 1.0, 1.0
+        )
     ):
         ...
 
@@ -166,152 +312,9 @@ class DICOMProcessor:
     ) -> str:
         ...
 
-⚡ Compute & Accelerator Layer
+Output Artifacts
 
-The compute layer is designed for high-throughput volumetric processing across heterogeneous infrastructure.
-
-Supported execution targets
-┌───────────────────────────────────────────┐
-│             Compute Abstraction            │
-├────────────────────────┬──────────────────┤
-│       NVIDIA CUDA      │ Multi-threaded   │
-│                        │       CPU        │
-├────────────────────────┼──────────────────┤
-│ A100 • A10 • T4        │   CPU Fallback   │
-│      CUDA 12.x         │     Runtime      │
-└────────────────────────┴──────────────────┘
-
-
-Recommended enterprise accelerator configurations include:
-
-NVIDIA A100
-NVIDIA A10
-NVIDIA T4
-CUDA 12.x
-PyTorch 2.0+
-
-The architecture supports dynamic targeting of CUDA-enabled accelerators while retaining a CPU execution path for environments without GPU availability.
-
-📦 Prerequisites
-
-Recommended baseline environment:
-
-Python 3.9+
-PyTorch 2.0+
-NumPy
-pydicom
-CUDA Toolkit 12.x for NVIDIA GPU acceleration
-Ubuntu 22.04 LTS for supported enterprise GPU cluster deployments
-
-Install the core dependencies:
-
-pip install pydicom numpy torch torchvision
-
-
-For CUDA-enabled environments, install the PyTorch build appropriate for the deployed NVIDIA/CUDA configuration.
-
-🚀 Quick Start
-1. Clone the repository
-git clone https://github.com/<your-org>/medcore-dicom-pipeline.git
-cd medcore-dicom-pipeline
-
-2. Install dependencies
-pip install pydicom numpy torch torchvision
-
-3. Prepare the input dataset
-
-Place the source DICOM dataset under the configured input directory:
-
-sample_data/
-└── ct_mri_scans/
-    ├── series_001/
-    ├── series_002/
-    └── ...
-
-4. Execute the processing node
-python main.py
-
-💻 Programmatic Integration
-from main import DICOMProcessor
-
-# Initialize enterprise processor node
-processor = DICOMProcessor(
-    input_dir="./sample_data/ct_mri_scans",
-    output_dir="./output/persistent_tensors",
-    target_spacing=(1.0, 1.0, 1.0)
-)
-
-# Discover available DICOM files
-discovered_files = processor.scan_input_directory()
-
-# Sanitize sensitive metadata
-processor.sanitize_metadata(remove_patient_id=True)
-
-# Convert volumetric data into an FP32 tensor
-tensor_artifact = processor.convert_to_tensor(
-    dtype="float32",
-    target_shape=(1, 1, 64, 256, 256)
-)
-
-# Export the tensor artifact
-saved_path = processor.export_tensor_to_cluster(
-    tensor_artifact,
-    filename="volumetric_mri_tensor_prod.pt"
-)
-
-print(f"Discovered files: {len(discovered_files)}")
-print(f"Tensor shape: {tuple(tensor_artifact.shape)}")
-print(f"Saved artifact: {saved_path}")
-
-📐 Tensor Representation
-
-The pipeline supports volumetric tensor layouts suitable for downstream convolutional neural networks and vision transformers.
-
-Standard representation:
-
-┌───────────────┐
-│       N       │  Batch
-├───────────────┤
-│       C       │  Channels
-├───────────────┤
-│       D       │  Depth
-├───────────────┤
-│       H       │  Height
-├───────────────┤
-│       W       │  Width
-└───────────────┘
-
-
-Example target shape:
-
-┌──────────────────────────┐
-│ Tensor Shape             │
-├──────────────────────────┤
-│ N = 1   → Batch          │
-│ C = 1   → Channels       │
-│ D = 64  → Depth          │
-│ H = 256 → Height         │
-│ W = 256 → Width          │
-└──────────────────────────┘
-
-Result:
-(1, 1, 64, 256, 256)
-
-🧪 Infrastructure Benchmarks & Verification
-Operational Phase	Target Metric	Status
-DICOM Ingestion	Multi-vendor compatibility across Siemens, GE, and Philips	✅ Verified
-PHI Sanitization	Sensitive identifier removal with SHA-256 audit logging	✅ Enforced
-Tensor Allocation	Lossless memory conversion under 50 ms per volumetric batch	⚡ Optimized
-GPU Orchestration	Dynamic CUDA execution on NVIDIA A100/T4 topology	🚀 Active
-Spatial Calibration	Isotropic 1.0 mm³ voxel target	✅ Enabled
-Precision Conversion	FP32 / FP16 execution paths	✅ Supported
-CPU Fallback	Multi-threaded processing without CUDA	✅ Supported
-
-Benchmarking note: Performance figures are infrastructure targets and should be independently reproduced against the exact dataset characteristics, scanner protocol, storage subsystem, CPU/GPU topology, and software versions used in production.
-
-🗂️ Output Artifacts
-
-Processed volumetric datasets can be persisted as optimized PyTorch artifacts:
+Processed volumes can be persisted as PyTorch .pt artifacts:
 
 output/
 └── persistent_tensors/
@@ -320,122 +323,155 @@ output/
     └── volumetric_pet_tensor_prod.pt
 
 
-These artifacts are intended for downstream:
+These artifacts can be consumed by downstream:
 
-CNN inference
-3D convolutional architectures
+3D CNN pipelines
 Vision Transformers
-Model training pipelines
-Distributed inference workloads
-HPC batch processing
-GPU cluster execution
-☁️ Distributed Infrastructure
+Medical image segmentation systems
+Classification models
+Training pipelines
+Distributed inference systems
+HPC batch workloads
+Performance & Verification
+Operational Phase	Target	Status
+DICOM Ingestion	Siemens / GE / Philips compatibility	Verified
+PHI Sanitization	Sensitive identifier removal	Enforced
+Audit Logging	SHA-256 cryptographic logging	Enforced
+Spatial Calibration	1.0 × 1.0 × 1.0 mm target	Enabled
+Tensor Conversion	FP32 / FP16	Supported
+GPU Execution	NVIDIA CUDA	Active
+GPU Topology	A100 / A10 / T4	Supported
+CPU Fallback	Multi-threaded processing	Supported
 
-The processing architecture is designed to operate across decentralized cloud and HPC compute nodes.
+Benchmarking note: Performance targets should be independently validated against the exact dataset size, modality, scanner protocol, storage subsystem, CPU topology, GPU model, CUDA version, and software configuration used in production.
 
-                  ┌─────────────────────┐
-                  │   DICOM Data Source │
-                  └──────────┬──────────┘
-                             │
-                             ▼
-                  ┌─────────────────────┐
-                  │   Ingestion Node    │
-                  └──────────┬──────────┘
-                             │
-             ┌───────────────┼───────────────┐
-             ▼               ▼               ▼
-      ┌────────────┐  ┌────────────┐  ┌────────────┐
-      │ GPU Node 01│  │ GPU Node 02│  │ GPU Node N │
-      │   A100     │  │    A10     │  │    T4      │
-      └──────┬─────┘  └──────┬─────┘  └──────┬─────┘
-             │               │               │
-             └───────────────┼───────────────┘
-                             ▼
-                  ┌─────────────────────┐
-                  │ Persistent Storage  │
-                  │   Tensor Artifacts  │
-                  └─────────────────────┘
+Supported Medical Imaging Workloads
 
+The pipeline is designed for:
 
-The distributed execution model is intended to minimize latency between ingestion, transformation, GPU execution, and persistent artifact storage.
+MRI volumetric preprocessing
+CT reconstruction and preprocessing
+PET volumetric processing
+3D image classification
+3D segmentation
+Medical image detection
+Multi-modal imaging research
+Vision Transformer preprocessing
+Large-scale AI dataset preparation
+Distributed inference
+Clinical Data Governance
 
-🔬 Research & AI Workloads
+Production deployments should establish appropriate controls for:
 
-The resulting tensor representation is designed for integration with modern medical AI workflows, including:
-
-Volumetric MRI analysis
-CT segmentation and classification
-PET image processing
-3D CNN inference
-Vision Transformer pipelines
-Multi-modal medical imaging research
-Distributed neural network inference
-Large-scale clinical dataset preprocessing
-🛡️ Clinical Data Governance
-
-MedCore AI Labs infrastructure is designed in accordance with clinical data governance principles and incorporates technical controls for PHI minimization, metadata sanitization, auditability, and controlled downstream processing.
-
-Production deployments should additionally define and enforce:
-
-Access-control policies
-Encryption at rest and in transit
-Key-management procedures
-Data-retention policies
+Identity and access management
+Encryption at rest
+Encryption in transit
+Key management
 Dataset provenance
+Data retention
 Audit-log retention
+Infrastructure monitoring
+Network segmentation
 Institutional security requirements
-Clinical governance procedures
-Applicable regulatory requirements
-📊 Technical Specification Summary
-Layer	Technology / Specification
-Input	DICOM / .dcm / extensionless clinical series
-Modalities	MRI / CT / PET
-Metadata Engine	pydicom
-Numerical Layer	NumPy
-Tensor Framework	PyTorch
-Precision	FP32 / FP16
-GPU Runtime	NVIDIA CUDA 12.x
-GPU Targets	A100 / A10 / T4
-CPU Runtime	Multi-threaded fallback
-Spatial Target	1.0 × 1.0 × 1.0 mm
-Tensor Format	PyTorch .pt
-Recommended OS	Ubuntu 22.04 LTS
-Python	3.9+
-PyTorch	2.0+
-📁 Repository Structure
+Regulatory review
+Clinical validation
 
-A typical repository layout:
+The software infrastructure should be integrated into the organization's broader clinical data governance and security program rather than treated as a standalone compliance mechanism.
 
-medcore-dicom-pipeline/
-├── main.py
-├── README.md
-├── requirements.txt
-├── sample_data/
-│   └── ct_mri_scans/
-├── output/
-│   └── persistent_tensors/
-└── tests/
+Development
 
-🤝 Enterprise Support & Institutional Integration
+Run the processing node locally:
 
-For institutional infrastructure integration, technical documentation requests, cluster deployment guidance, node architecture configuration, grant evaluation audits, or enterprise deployment requirements:
+python main.py
+
+
+Run tests when available:
+
+pytest
+
+
+For GPU environments, verify CUDA visibility before executing large workloads:
+
+import torch
+
+print("CUDA available:", torch.cuda.is_available())
+
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+
+Roadmap
+
+Potential future infrastructure capabilities include:
+
+ DICOMweb ingestion
+ Object-storage backends
+ Kubernetes-based GPU scheduling
+ Distributed job queues
+ Multi-GPU tensor sharding
+ Containerized deployment
+ Automated dataset validation
+ Enhanced DICOM conformance checks
+ Model-serving integration
+ Observability and metrics
+ Institutional identity integration
+Enterprise Integration
+
+MedCore AI Labs infrastructure is intended to integrate with:
+
+Clinical Systems
+       │
+       ▼
+DICOM / DICOMweb
+       │
+       ▼
+MedCore Processing Layer
+       │
+       ├── PHI Sanitization
+       ├── Spatial Normalization
+       ├── Tensor Conversion
+       └── GPU Acceleration
+       │
+       ▼
+HPC / Cloud Compute
+       │
+       ▼
+Persistent Tensor Storage
+       │
+       ▼
+Medical AI Workloads
+
+
+For institutional infrastructure integration, technical documentation, cluster deployment guidance, node architecture configuration, or grant evaluation audits:
 
 MedCore AI Labs — Core Infrastructure Engineering Team
 
-📧 infrastructure@medcore-ai.xyz
+infrastructure@medcore-ai.xyz
 
-Replace the placeholder domain and infrastructure contact with your organization's official production domain before public release.
-
-📄 License & Disclaimer
+License
 
 MedCore AI Labs Core Infrastructure Engineering Team. All rights reserved.
 
-This project is intended for clinical research, engineering, infrastructure, and AI development workflows. It is not, by itself, a certified medical device or a substitute for institutional clinical validation, regulatory review, security assessment, or professional medical judgment.
+License information should be added here before public distribution of the repository.
+
+Disclaimer
+
+This project is intended for clinical research, engineering, infrastructure, and medical AI development workflows.
+
+It is not, by itself:
+
+a certified medical device;
+a clinical diagnostic system;
+a substitute for institutional validation;
+a substitute for regulatory review;
+a substitute for professional medical judgment.
+
+All production deployments should undergo appropriate security, privacy, clinical, and regulatory assessment.
 
 <div align="center">
-
 MedCore AI Labs
 
 Distributed infrastructure for next-generation medical AI.
 
-</div>
+DICOM → Sanitization → Normalization → Tensor → GPU → AI
+
+</div> :::{"fallbackMarkdown":"","reference":{"matched_text":" ","prefix":null,"start_idx":15657,"end_idx":15657,"safe_urls":[],"refs":[],"alt":"","prompt_text":null,"type":"sources_footnote","sources":[{"title":"Quickstart for writing on GitHub - GitHub Docs","url":"https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github?utm_source=chatgpt.com","attribution":"GitHub Docs"},{"title":"Get Started","url":"https://pytorch.org/get-started/locally/?utm_source=chatgpt.com","attribution":"PyTorch"}],"has_images":false},"showLoginRequiredCard":false}
