@@ -1,10 +1,5 @@
 # MedCore AI Labs — Distributed Medical AI Infrastructure
 
-![Python](https://shields.io)
-![PyTorch](https://shields.io)
-![CUDA](https://shields.io)
-![Ubuntu](https://shields.io)
-
 > **Production-grade enterprise pipeline for multi-vendor DICOM ingestion, automated zero-trust HIPAA-compliant PHI sanitization, spatial normalization, zero-loss FP32/FP16 tensor conversion, and distributed GPU cluster orchestration.**
 
 ---
