@@ -1,6 +1,6 @@
 MedCore AI Labs — Distributed Medical AI Infrastructure
 
-Production-grade infrastructure for multi-vendor DICOM ingestion, automated zero-trust PHI sanitization, spatial normalization, lossless FP32/FP16 tensor conversion, and distributed GPU cluster execution.
+Production-grade infrastructure for multi-vendor DICOM ingestion, zero-trust PHI sanitization, spatial normalization, FP32/FP16 tensor conversion, and distributed GPU cluster execution.
 
 MedCore AI Labs provides high-performance infrastructure for bridging legacy clinical radiology systems with modern AI inference environments.
 
@@ -43,17 +43,17 @@ The medcore-dicom-pipeline engine is designed to ingest volumetric MRI, CT, and 
 Capability	Description
 DICOM Ingestion	Recursive multi-vendor ingestion of standard .dcm files and extensionless clinical series
 PHI Sanitization	Automated removal of sensitive identifiers before secondary processing and storage
-Cryptographic Auditing	Verifiable SHA-256 hashing and AES-256 audit-trail infrastructure
+Cryptographic Auditing	SHA-256 hashing and AES-256 audit-trail infrastructure
 Spatial Normalization	Standardized isotropic voxel resampling to a 1.0 × 1.0 × 1.0 mm grid
-Volumetric Conversion	Transformation of multi-slice 2D DICOM series into contiguous 3D/4D/5D tensor structures
+Volumetric Conversion	Transformation of multi-slice 2D DICOM datasets into contiguous volumetric tensors
 Precision Support	FP32 and FP16 tensor conversion for inference and accelerator workloads
-GPU Acceleration	NVIDIA CUDA execution with support for A100, A10, and T4 architectures
+GPU Acceleration	NVIDIA CUDA execution targeting A100, A10, and T4 architectures
 CPU Fallback	Multi-threaded CPU execution when CUDA acceleration is unavailable
 Distributed Execution	Pipeline architecture designed for decentralized cloud and HPC compute nodes
-Persistent Artifacts	Export of optimized PyTorch .pt tensor artifacts for downstream workloads
+Persistent Artifacts	Export of optimized PyTorch .pt tensor artifacts
 🔐 Security & PHI Sanitization
 
-The pipeline incorporates a zero-trust processing model intended to minimize exposure of protected health information during downstream computational workflows.
+The pipeline incorporates a zero-trust processing model designed to minimize exposure of protected health information throughout downstream computational workflows.
 
 Sensitive DICOM attributes targeted by the sanitization layer include:
 
@@ -64,33 +64,51 @@ InstitutionName
 PhysiciansOfRecord
 
 
-The processing architecture is designed around the following sequence:
+The processing sequence is structured as follows:
 
-Raw DICOM
-    │
-    ▼
-Metadata Inspection
-    │
-    ▼
-PHI Identification
-    │
-    ▼
-Metadata Sanitization
-    │
-    ▼
-Cryptographic Audit Logging
-    │
-    ▼
-Sanitized Dataset
-    │
-    ▼
-Tensor Conversion
-    │
-    ▼
-Persistent Tensor Artifact
+┌───────────────────────┐
+│      Raw DICOM        │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│  Metadata Inspection  │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│   PHI Identification  │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│ Metadata Sanitization │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│ Cryptographic Audit   │
+│     SHA-256 / AES-256 │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│   Sanitized Dataset   │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│   Tensor Conversion   │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│ Persistent Tensor     │
+│      Artifact         │
+└───────────────────────┘
 
 
-Compliance note: Technical sanitization controls do not, by themselves, constitute legal HIPAA compliance. Production deployments should be validated against the applicable institutional policies, security controls, Business Associate Agreements, retention requirements, and regulatory obligations.
+Compliance note: Technical sanitization controls do not, by themselves, constitute legal HIPAA compliance. Production deployments should be validated against applicable institutional policies, security controls, Business Associate Agreements, retention requirements, and regulatory obligations.
 
 🧠 Volumetric Processing Pipeline
 
@@ -108,7 +126,7 @@ FP32/FP16 optimization
 GPU or CPU execution
 Persistent .pt artifact export
 
-This architecture is intended to provide invariant spatial representation across datasets originating from different clinical scanners and acquisition protocols.
+The resulting representation is intended to provide consistent spatial characteristics across datasets originating from different clinical scanners and acquisition environments.
 
 🏗️ Codebase Structure
 
@@ -153,12 +171,15 @@ class DICOMProcessor:
 The compute layer is designed for high-throughput volumetric processing across heterogeneous infrastructure.
 
 Supported execution targets
-┌───────────────────────────────────────┐
-│          Compute Abstraction          │
-├───────────────────┬───────────────────┤
-│ NVIDIA CUDA       │ Multi-thread CPU   │
-│ A100 / A10 / T4   │ Fallback Runtime   │
-└───────────────────┴───────────────────┘
+┌───────────────────────────────────────────┐
+│             Compute Abstraction            │
+├────────────────────────┬──────────────────┤
+│       NVIDIA CUDA      │ Multi-threaded   │
+│                        │       CPU        │
+├────────────────────────┼──────────────────┤
+│ A100 • A10 • T4        │   CPU Fallback   │
+│      CUDA 12.x         │     Runtime      │
+└────────────────────────┴──────────────────┘
 
 
 Recommended enterprise accelerator configurations include:
@@ -246,29 +267,35 @@ print(f"Saved artifact: {saved_path}")
 
 The pipeline supports volumetric tensor layouts suitable for downstream convolutional neural networks and vision transformers.
 
-Example target representation:
+Standard representation:
 
-(N, C, D, H, W)
- │  │  │  │  │
- │  │  │  │  └── Width
- │  │  │  └───── Height
- │  │  └──────── Depth
- │  └─────────── Channels
- └────────────── Batch
+┌───────────────┐
+│       N       │  Batch
+├───────────────┤
+│       C       │  Channels
+├───────────────┤
+│       D       │  Depth
+├───────────────┤
+│       H       │  Height
+├───────────────┤
+│       W       │  Width
+└───────────────┘
 
 
-Example:
+Example target shape:
 
-target_shape = (1, 1, 64, 256, 256)
+┌──────────────────────────┐
+│ Tensor Shape             │
+├──────────────────────────┤
+│ N = 1   → Batch          │
+│ C = 1   → Channels       │
+│ D = 64  → Depth          │
+│ H = 256 → Height         │
+│ W = 256 → Width          │
+└──────────────────────────┘
 
-
-Resulting tensor:
-
-Batch:       1
-Channels:    1
-Depth:      64
-Height:    256
-Width:     256
+Result:
+(1, 1, 64, 256, 256)
 
 🧪 Infrastructure Benchmarks & Verification
 Operational Phase	Target Metric	Status
@@ -348,67 +375,4 @@ Large-scale clinical dataset preprocessing
 
 MedCore AI Labs infrastructure is designed in accordance with clinical data governance principles and incorporates technical controls for PHI minimization, metadata sanitization, auditability, and controlled downstream processing.
 
-Production deployments should additionally define and enforce:
-
-Access-control policies
-Encryption-at-rest and encryption-in-transit
-Key-management procedures
-Data-retention policies
-Dataset provenance
-Audit-log retention
-Institutional security requirements
-Clinical governance procedures
-Applicable regulatory requirements
-📊 Technical Specification Summary
-Layer	Technology / Specification
-Input	DICOM / .dcm / extensionless clinical series
-Modalities	MRI / CT / PET
-Metadata Engine	pydicom
-Numerical Layer	NumPy
-Tensor Framework	PyTorch
-Precision	FP32 / FP16
-GPU Runtime	NVIDIA CUDA 12.x
-GPU Targets	A100 / A10 / T4
-CPU Runtime	Multi-threaded fallback
-Spatial Target	1.0 × 1.0 × 1.0 mm
-Tensor Format	PyTorch .pt
-Recommended OS	Ubuntu 22.04 LTS
-Python	3.9+
-PyTorch	2.0+
-📁 Repository Structure
-
-A typical repository layout:
-
-medcore-dicom-pipeline/
-├── main.py
-├── README.md
-├── requirements.txt
-├── sample_data/
-│   └── ct_mri_scans/
-├── output/
-│   └── persistent_tensors/
-└── tests/
-
-🤝 Enterprise Support & Institutional Integration
-
-For institutional infrastructure integration, technical documentation requests, cluster deployment guidance, node architecture configuration, grant evaluation audits, or enterprise deployment requirements:
-
-MedCore AI Labs — Core Infrastructure Engineering Team
-
-📧 infrastructure@medcore-ai.xyz
-
-Replace the placeholder domain and infrastructure contact with your organization's official production domain before public release.
-
-📄 License & Disclaimer
-
-MedCore AI Labs Core Infrastructure Engineering Team. All rights reserved.
-
-This project is intended for clinical research, engineering, infrastructure, and AI development workflows. It is not, by itself, a certified medical device or a substitute for institutional clinical validation, regulatory review, security assessment, or professional medical judgment.
-
-<div align="center">
-
-MedCore AI Labs
-
-Distributed infrastructure for next-generation medical AI.
-
-</div>
+Production deployments should additionally define and enforce
