@@ -5,39 +5,11 @@ Production-grade enterprise infrastructure for multi-vendor DICOM ingestion, aut
 MedCore AI Labs provides high-performance infrastructure for bridging legacy clinical radiology systems with modern AI inference environments. The medcore-dicom-pipeline engine is designed to ingest volumetric MRI, CT, and PET datasets, sanitize sensitive metadata, normalize spatial dimensions, convert imaging volumes into optimized PyTorch tensors, and prepare artifacts for distributed GPU execution.
 
 Architecture Overview
-┌──────────────────────────────┐
-│      Legacy DICOM Source     │
-│       MRI / CT / PET         │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│   Zero-Trust HIPAA Gateway   │
-│ PHI Scrubbing + Audit Trail  │
-│          AES-256             │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│     Spatial Normalization    │
-│ Isotropic Voxel Resampling   │
-│         1.0 mm³ Grid         │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│    PyTorch GPU Accelerator   │
-│ CUDA 12.x / A100 / T4 / GPU │
-│    Cluster Orchestration     │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│      Persistent Storage      │
-│ Optimized Tensor Artifacts   │
-│            .pt               │
-└──────────────────────────────┘
-
+Legacy DICOM SourceMRI / CT / PET
+Zero-Trust HIPAA GatewayPHI Scrubbing + Audit TrailAES-256
+Spatial NormalizationIsotropic Voxel Resampling1.0 mm³ Grid
+PyTorch GPU AcceleratorCUDA 12.x / A100 / T4Cluster Orchestration
+Persistent StorageOptimized Tensor Artifacts.pt
 Core Capabilities
 🧬 Multi-Vendor DICOM Ingestion
 Recursive discovery of clinical DICOM datasets.
@@ -95,40 +67,17 @@ FP32
 FP16
 End-to-End Processing Pipeline
 DICOM Discovery
-      │
-      ▼
 Metadata Parsing
-      │
-      ▼
 PHI Sanitization
-      │
-      ▼
 Cryptographic Audit Logging
-      │
-      ▼
-Slice Ordering & Volume Assembly
-      │
-      ▼
+Slice Ordering& Volume Assembly
 Spatial Calibration
-      │
-      ▼
 Isotropic Resampling
-      │
-      ▼
 Tensor Construction
-      │
-      ▼
 FP32 / FP16 Conversion
-      │
-      ▼
 GPU Acceleration
-      │
-      ▼
 Cluster Export
-      │
-      ▼
-Persistent .pt Tensor Artifact
-
+Persistent .ptTensor Artifact
 Technical Specifications
 Layer	Specification
 Input	MRI / CT / PET DICOM datasets
@@ -240,37 +189,38 @@ print(f"Processed {len(discovered_files)} DICOM files")
 print(f"Tensor artifact exported to: {saved_path}")
 
 Distributed GPU Execution
-
-The pipeline is designed as a compute layer for distributed medical-AI infrastructure.
-
-                  ┌──────────────────────┐
-                  │   DICOM Data Source  │
-                  └──────────┬───────────┘
-                             │
-                             ▼
-                  ┌──────────────────────┐
-                  │  Processing Gateway  │
-                  │  PHI Sanitization    │
-                  └──────────┬───────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              │              │              │
-              ▼              ▼              ▼
-       ┌────────────┐ ┌────────────┐ ┌────────────┐
-       │ GPU Node 1 │ │ GPU Node 2 │ │ GPU Node N │
-       │  A100/T4   │ │  A100/T4   │ │  A100/T4   │
-       └─────┬──────┘ └─────┬──────┘ └─────┬──────┘
-             │              │              │
-             └──────────────┼──────────────┘
-                            │
-                            ▼
-                  ┌──────────────────────┐
-                  │ Persistent Tensor    │
-                  │ Storage / .pt Assets │
-                  └──────────────────────┘
-
+DICOM Data SourceMRI / CT / PET
+Processing GatewayPHI Sanitization
+GPU Node 1NVIDIA A100 / T4
+GPU Node 2NVIDIA A100 / T4
+GPU Node NNVIDIA A100 / T4
+Persistent Tensor StorageOptimized .pt Artifacts
 
 The distributed execution layer is intended to support low-latency batch processing across decentralized cloud or institutional compute nodes while maintaining a consistent preprocessing contract between ingestion and model inference.
+
+Distributed Processing Model
+flowchart LR
+    A["Clinical Dataset"]
+    B["Secure Processing Boundary"]
+    C["PHI Sanitization"]
+    D["Spatial Normalization"]
+
+    subgraph GPU["Distributed GPU Cluster"]
+        G1["GPU Worker 1<br/>A100 / T4"]
+        G2["GPU Worker 2<br/>A100 / T4"]
+        GN["GPU Worker N<br/>A100 / T4"]
+    end
+
+    H["Tensor Artifact Storage<br/>.pt"]
+
+    A --> B --> C --> D
+    D --> G1
+    D --> G2
+    D --> GN
+
+    G1 --> H
+    G2 --> H
+    GN --> H
 
 Infrastructure Benchmarks & Verification
 Operational Phase	Target Metric	Status
@@ -287,67 +237,23 @@ Security & Data Governance
 
 MedCore AI Labs is designed around a zero-trust processing model in which sensitive metadata is handled as an explicit preprocessing stage before downstream tensor persistence.
 
-The intended security workflow is:
-
 Raw Clinical Dataset
-        │
-        ▼
-┌─────────────────────┐
-│ Isolated Processing │
-│     Boundary        │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ PHI Identification  │
-│ & Sanitization      │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Cryptographic Audit │
-│     / Hashing       │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Sanitized Dataset   │
-│ + Tensor Artifacts  │
-└─────────────────────┘
-
+Isolated Processing Boundary
+PHI Identification & Sanitization
+Cryptographic Audit / Hashing
+Sanitized Dataset + Tensor Artifacts
 
 The system is intended for deployment within controlled clinical, research, or enterprise environments where appropriate access controls, encryption, audit policies, retention policies, and institutional governance are independently configured and validated.
 
 Clinical AI Workflow
-
-MedCore AI is optimized for the preprocessing stage of modern medical-AI systems:
-
 Clinical Imaging
-      │
-      ▼
 DICOM Ingestion
-      │
-      ▼
 PHI Sanitization
-      │
-      ▼
 Volumetric Reconstruction
-      │
-      ▼
 Spatial Normalization
-      │
-      ▼
 Tensor Conversion
-      │
-      ▼
 GPU Infrastructure
-      │
-      ▼
-┌─────────────────────────────┐
-│ CNN / 3D CNN / ViT / AI     │
-│ Inference & Research Models │
-└─────────────────────────────┘
-
+CNN / 3D CNN / ViTAI Inference & Research
 
 This architecture enables a consistent volumetric representation between heterogeneous clinical imaging sources and downstream neural-network workloads.
 
