@@ -375,4 +375,67 @@ Large-scale clinical dataset preprocessing
 
 MedCore AI Labs infrastructure is designed in accordance with clinical data governance principles and incorporates technical controls for PHI minimization, metadata sanitization, auditability, and controlled downstream processing.
 
-Production deployments should additionally define and enforce
+Production deployments should additionally define and enforce:
+
+Access-control policies
+Encryption at rest and in transit
+Key-management procedures
+Data-retention policies
+Dataset provenance
+Audit-log retention
+Institutional security requirements
+Clinical governance procedures
+Applicable regulatory requirements
+📊 Technical Specification Summary
+Layer	Technology / Specification
+Input	DICOM / .dcm / extensionless clinical series
+Modalities	MRI / CT / PET
+Metadata Engine	pydicom
+Numerical Layer	NumPy
+Tensor Framework	PyTorch
+Precision	FP32 / FP16
+GPU Runtime	NVIDIA CUDA 12.x
+GPU Targets	A100 / A10 / T4
+CPU Runtime	Multi-threaded fallback
+Spatial Target	1.0 × 1.0 × 1.0 mm
+Tensor Format	PyTorch .pt
+Recommended OS	Ubuntu 22.04 LTS
+Python	3.9+
+PyTorch	2.0+
+📁 Repository Structure
+
+A typical repository layout:
+
+medcore-dicom-pipeline/
+├── main.py
+├── README.md
+├── requirements.txt
+├── sample_data/
+│   └── ct_mri_scans/
+├── output/
+│   └── persistent_tensors/
+└── tests/
+
+🤝 Enterprise Support & Institutional Integration
+
+For institutional infrastructure integration, technical documentation requests, cluster deployment guidance, node architecture configuration, grant evaluation audits, or enterprise deployment requirements:
+
+MedCore AI Labs — Core Infrastructure Engineering Team
+
+📧 infrastructure@medcore-ai.xyz
+
+Replace the placeholder domain and infrastructure contact with your organization's official production domain before public release.
+
+📄 License & Disclaimer
+
+MedCore AI Labs Core Infrastructure Engineering Team. All rights reserved.
+
+This project is intended for clinical research, engineering, infrastructure, and AI development workflows. It is not, by itself, a certified medical device or a substitute for institutional clinical validation, regulatory review, security assessment, or professional medical judgment.
+
+<div align="center">
+
+MedCore AI Labs
+
+Distributed infrastructure for next-generation medical AI.
+
+</div>
