@@ -11,8 +11,8 @@ Description: Production-grade enterprise pipeline for multi-vendor DICOM ingesti
              zero-loss FP32/FP16 tensor conversion, and distributed GPU cluster
              orchestration (CUDA 12.x / NVIDIA A100/A10/T4 topology).
 
-Repository:
-Version: 4.2.0
+Repository: https://github.com/user123141/medcore-dicom-pipeline
+Version: 4.2.0-Enterprise
 Author: Maksym Skorina & MedCore AI Labs Core Infrastructure Engineering Team
 ===================================================================================
 """
@@ -22,6 +22,7 @@ import sys
 import time
 import logging
 import hashlib
+import argparse
 from typing import List, Dict, Tuple, Any, Optional
 from pathlib import Path
 
@@ -255,7 +256,6 @@ class DICOMProcessor:
                 current_depth, current_height, current_width = resampled.shape
                 # Crop or pad to exact size (center crop)
                 def center_crop_pad(data, target_size):
-                    import math
                     shape = data.shape
                     diff = [target_size[i] - shape[i] for i in range(3)]
                     slices = []
@@ -326,33 +326,95 @@ class DICOMProcessor:
         return output_path
 
 
+def parse_arguments():
+    """Parse command-line arguments for flexible pipeline execution."""
+    parser = argparse.ArgumentParser(
+        description="MedCore AI Labs — Distributed Medical AI Pipeline",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Example usage:
+  python main.py --input-dir ./sample_data/ct_mri_scans --output-dir ./output/tensors --target-spacing 1.0 1.0 1.0 --dtype float32 --target-shape 1 1 64 256 256
+        """
+    )
+    parser.add_argument(
+        '--input-dir', '-i',
+        type=str,
+        default="./sample_data/ct_mri_scans",
+        help="Path to raw DICOM input directory (default: ./sample_data/ct_mri_scans)"
+    )
+    parser.add_argument(
+        '--output-dir', '-o',
+        type=str,
+        default="./output/persistent_tensors",
+        help="Path to output directory for persistent tensor storage (default: ./output/persistent_tensors)"
+    )
+    parser.add_argument(
+        '--target-spacing', '-s',
+        type=float,
+        nargs=3,
+        default=[1.0, 1.0, 1.0],
+        metavar=('Z', 'Y', 'X'),
+        help="Target isotropic voxel spacing in mm (three values: Z Y X) (default: 1.0 1.0 1.0)"
+    )
+    parser.add_argument(
+        '--dtype', '-d',
+        type=str,
+        choices=['float32', 'float16'],
+        default='float32',
+        help="Tensor precision: float32 or float16 (default: float32)"
+    )
+    parser.add_argument(
+        '--target-shape', '-t',
+        type=int,
+        nargs=5,
+        default=[1, 1, 64, 256, 256],
+        metavar=('B', 'C', 'D', 'H', 'W'),
+        help="Target tensor shape: Batch Channels Depth Height Width (default: 1 1 64 256 256)"
+    )
+    parser.add_argument(
+        '--filename', '-f',
+        type=str,
+        default="volumetric_mri_tensor_prod.pt",
+        help="Output filename for the saved tensor (default: volumetric_mri_tensor_prod.pt)"
+    )
+    parser.add_argument(
+        '--no-patient-id', '-n',
+        action='store_true',
+        help="Remove PatientID tags during sanitization (default: enabled, use this flag to disable)"
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_arguments()
+
     print("=" * 80)
     print(" MedCore AI Labs — Distributed Medical AI Pipeline Execution Node v4.2")
     print("=" * 80)
 
-    # Define operational cluster paths matching enterprise architecture spec
-    RAW_DATA_PATH = "./sample_data/ct_mri_scans"
-    TENSOR_OUTPUT_PATH = "./output/persistent_tensors"
+    # Build target spacing and shape tuples
+    target_spacing = tuple(args.target_spacing)
+    target_shape = tuple(args.target_shape)
 
     # Initialize the production DICOM processor pipeline
     processor = DICOMProcessor(
-        input_dir=RAW_DATA_PATH,
-        output_dir=TENSOR_OUTPUT_PATH,
-        target_spacing=(1.0, 1.0, 1.0)
+        input_dir=args.input_dir,
+        output_dir=args.output_dir,
+        target_spacing=target_spacing
     )
 
     # Step 1: Discover available raw volumetric files
     files = processor.scan_input_directory()
 
     # Step 2: Execute HIPAA-compliant zero-trust metadata anonymization
-    sanitization_status = processor.sanitize_metadata(remove_patient_id=True)
+    # The flag --no-patient-id makes remove_patient_id=False (i.e., keep PatientID)
+    sanitization_status = processor.sanitize_metadata(remove_patient_id=not args.no_patient_id)
 
     # Step 3: Convert pixel arrays to high-precision PyTorch tensors and deploy to GPU cluster
-    data_tensor = processor.convert_to_tensor(dtype="float32", target_shape=(1, 1, 64, 256, 256))
+    data_tensor = processor.convert_to_tensor(dtype=args.dtype, target_shape=target_shape)
 
     # Step 4: Export tensor artifacts for downstream neural inference models
-    saved_artifact = processor.export_tensor_to_cluster(data_tensor, filename="volumetric_mri_tensor_prod.pt")
+    saved_artifact = processor.export_tensor_to_cluster(data_tensor, filename=args.filename)
 
     print("=" * 80)
     print(f"[MedCore Pipeline Terminated Successfully]")
