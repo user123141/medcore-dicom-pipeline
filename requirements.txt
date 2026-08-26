@@ -1,0 +1,41 @@
+# ===================================================================================
+# MedCore AI Labs — Distributed Medical AI Infrastructure
+# Dependency Manifest (Production-Grade Pinned Versions)
+# ===================================================================================
+# This manifest locks all core dependencies to specific versions verified for
+# compatibility and security as of August 2026.
+#
+# Python Version Requirement: >=3.10 (officially tested on 3.12, 3.13, 3.14)
+# ===================================================================================
+
+# ----- Core Scientific Computing ---------------------------------------------------
+numpy==2.5.2                     # Fundamental array operations; supports Python 3.12-3.15
+scipy==1.18.0                    # Advanced scientific algorithms; released 2026-06-19
+
+# ----- Machine Learning & GPU Acceleration -----------------------------------------
+# PyTorch 2.13 is the latest stable release as of August 2026
+# For PyTorch 2.14 (GA: Sept 2, 2026), upgrade to torch==2.14.0 and torchvision==0.29.0
+torch==2.13.0                    # Core tensor library with CUDA 12.x support
+torchvision==0.28.0              # Computer vision transforms & models; compatible with torch 2.13
+
+# ----- DICOM Processing ------------------------------------------------------------
+pydicom==3.0.2                   # DICOM file I/O and metadata handling (production grade)
+
+# ----- Image Resampling & Spatial Normalization ------------------------------------
+SimpleITK==2.5.6                 # Advanced image registration and resampling (optional, but recommended)
+# Alternatively, we use scipy.ndimage.zoom internally, so SimpleITK is not strictly required
+# but kept for future extensibility.
+
+# ===================================================================================
+# Installation Instructions
+# ===================================================================================
+# Create and activate a virtual environment, then install:
+#
+#   pip install -r requirements.txt
+#
+# For CUDA 12.x support with PyTorch, use the official PyTorch wheel:
+#
+#   pip install torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cu121
+#
+# For production DICOM support, both pydicom and SimpleITK are included.
+# ===================================================================================
